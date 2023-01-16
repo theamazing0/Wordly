@@ -1,0 +1,22 @@
+.maingrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 50px;
+  grid-row-gap: 0px;
+}
+
+.maingrid-1 {
+  grid-area: 1 / 1 / 2 / 5;
+}
+.maingrid-2 {
+  grid-area: 1 / 5 / 2 / 7;
+}
+
+a {
+  --color: var(--color) !important;
+}
+
+/* aside {
+  position: fixed;
+} */
