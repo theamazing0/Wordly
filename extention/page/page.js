@@ -5,13 +5,14 @@ function wordSelected(event) {
     fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + messagewords[event.target.id])
         .then((response) => response.json())
         .then((data) => console.log(data));
+    tooltip.setAttribute('data-show', '');
 };
 
 function handleResponse(message) {
     // splitmessage = message.split(/[\s\n]+/);
     let currentword = ""
     for (var i = 0; i <= message.length; i++) {
-        if (message[i] == "," || message[i] == "." || message[i] == "/" || message[i] == "~" || message[i] == "-" || message[i] == "_" || message[i] == "(" || message[i] == ")" || message[i] == "[" || message[i] == "]" || message[i] == "+" || message[i] == "!" || message[i] == "&" || message[i] == "?") {
+        if (message[i] == "," || message[i] == "." || message[i] == "/" || message[i] == "~" || message[i] == "-" || message[i] == "_" || message[i] == "(" || message[i] == ")" || message[i] == "[" || message[i] == "]" || message[i] == "+" || message[i] == "!" || message[i] == "&" || message[i] == "?" || message[i] == '"') {
             let currentWordIndex = messagewords.push(currentword) - 1;
             document.getElementById("textbox").innerHTML += `<a class="word" id="${currentWordIndex}">${currentword}</a>`;
             document.getElementById("textbox").innerHTML += message[i]
@@ -35,6 +36,16 @@ function handleResponse(message) {
     };
     words = document.getElementsByClassName('word');
     for (const el of words) {
+        const popperInstance = Popper.createPopper(el, document.querySelector('#tooltip'), {
+            modifiers: [
+                {
+                    name: 'offset',
+                    options: {
+                        offset: [0, 8],
+                    },
+                },
+            ],
+        });
         el.addEventListener("click", wordSelected, false);
     };
     document.getElementById("loading-indicator").style.display = 'none';
@@ -44,5 +55,17 @@ function handleError(error) {
     console.log(`Error: ${error}`);
 }
 
+// !
+
+function hide() {
+    tooltip.removeAttribute('data-show');
+}
+
+// !
+
 const sending = browser.runtime.sendMessage({ request: "selection" });
 sending.then(handleResponse, handleError);
+
+const button = document.querySelector('#button');
+const tooltip = document.querySelector('#tooltip');
+const popperInstance = Popper.createPopper(button, tooltip);
