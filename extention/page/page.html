@@ -10,26 +10,15 @@
 </head>
 
 <body>
-    <main class="container-fluid">
+    <main class="container">
         <article>
             <p aria-busy="true" id="loading-indicator"></p>
             <p id="textbox"></p>
         </article>
-        <!-- <div class="maingrid-2">
-                <h5>Word</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <h5>Defintion</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <h5>Synonyms</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <h5>Example</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <h5>Word Difficulty</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div> -->
     </main>
-    <div id="tooltip" role="tooltip">My tooltip
-        <div id="arrow" data-popper-arrow></div>
+    <div id="tooltip-template" style="display: none;">
+        <h5>Definition</h5>
+        <p>Lorem ipsum hello world</p>
     </div>
     <script src="popperjs/dist/umd/popper.min.js"></script>
     <script src="tippyjs/dist/tippy-bundle.umd.js"></script>
