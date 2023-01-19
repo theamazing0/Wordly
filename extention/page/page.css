@@ -1,3 +1,36 @@
-a {
+.word {
   --color: var(--color) !important;
+}
+
+.tooltip-more {
+  font-size: 25px !important;
+  text-decoration: none;
+}
+
+.tippy-box[data-theme~="picoinherit"] {
+  background-color: var(--dropdown-background-color) !important;
+}
+
+.tippy-p {
+  font-size: 14px !important;
+}
+
+.tippy-box[data-theme~="picoinherit"][data-placement^="top"] > .tippy-arrow::before {
+  border-top-color: var(--dropdown-background-color) !important;
+}
+
+.tippy-box[data-theme~="picoinherit"][data-placement^="bottom"] > .tippy-arrow::before {
+  border-bottom-color: var(--dropdown-background-color) !important;
+}
+
+.tippy-box[data-theme~="picoinherit"][data-placement^="left"] > .tippy-arrow::before {
+  border-left-color: var(--dropdown-background-color) !important;
+}
+
+.tippy-box[data-theme~="picoinherit"][data-placement^="right"] > .tippy-arrow::before {
+  border-right-color: var(--dropdown-background-color) !important;
+}
+
+dialog article {
+  min-width: 60% !important;
 }

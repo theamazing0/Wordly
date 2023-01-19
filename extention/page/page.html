@@ -1,28 +1,45 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="picocss/pico.min.css" />
     <link rel="stylesheet" href="page.css" />
     <title>Readr</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <main class="container">
-        <article>
-            <p aria-busy="true" id="loading-indicator"></p>
-            <p id="textbox"></p>
-        </article>
+      <h2>Wordly Readr</h2>
+      <article>
+        <p aria-busy="true" id="loading-indicator"></p>
+        <p id="textbox"></p>
+      </article>
     </main>
-    <div id="tooltip-template" style="display: none;">
-        <h5>Definition</h5>
-        <p>Lorem ipsum hello world</p>
+    <div id="tooltip-template" style="display: none">
+      <div id="tooltip-word"></div>
+      <div id="tooltip-definitions"></div>
+      <a class="tooltip-more">+</a>
     </div>
+    <div id="tooltip-loading" style="display: none">
+      <p aria-busy="true" id="loading-indicator"></p>
+    </div>
+    <div id="tooltip-no-data" style="display: none">
+      <div id="tooltip-word-no-data"></div>
+      <p class="tippy-p"><strong>No Data</strong></p>
+    </div>
+    <dialog id="word-profile-modal">
+      <article>
+        <header>
+          <a aria-label="Close" class="close" id="close-modal"></a>
+          Word Profile
+        </header>
+        <h3 id="modal-word"></h3>
+        <div id="definitions-box"></div>
+      </article>
+    </dialog>
     <script src="popperjs/dist/umd/popper.min.js"></script>
     <script src="tippyjs/dist/tippy-bundle.umd.js"></script>
     <script src="page.js"></script>
-</body>
-
+  </body>
 </html>
