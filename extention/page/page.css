@@ -19,19 +19,23 @@
   font-size: 14px !important;
 }
 
-.tippy-box[data-theme~="picoinherit"][data-placement^="top"] > .tippy-arrow::before {
+.tippy-box[data-theme~="picoinherit"][data-placement^="top"]
+  > .tippy-arrow::before {
   border-top-color: var(--dropdown-background-color) !important;
 }
 
-.tippy-box[data-theme~="picoinherit"][data-placement^="bottom"] > .tippy-arrow::before {
+.tippy-box[data-theme~="picoinherit"][data-placement^="bottom"]
+  > .tippy-arrow::before {
   border-bottom-color: var(--dropdown-background-color) !important;
 }
 
-.tippy-box[data-theme~="picoinherit"][data-placement^="left"] > .tippy-arrow::before {
+.tippy-box[data-theme~="picoinherit"][data-placement^="left"]
+  > .tippy-arrow::before {
   border-left-color: var(--dropdown-background-color) !important;
 }
 
-.tippy-box[data-theme~="picoinherit"][data-placement^="right"] > .tippy-arrow::before {
+.tippy-box[data-theme~="picoinherit"][data-placement^="right"]
+  > .tippy-arrow::before {
   border-right-color: var(--dropdown-background-color) !important;
 }
 

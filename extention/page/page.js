@@ -1,11 +1,6 @@
-// var splitmessage
-// var messagewords = []
 var modalvisible = false;
 
 function openModal() {
-  // if (isScrollbarVisible()) {
-  //   document.getElementById("word-profile-modal").style.setProperty("--scrollbar-width", `${getScrollbarWidth()}px`);
-  // }
   tippy.hideAll({ duration: 0 });
   modalvisible = true;
   document.getElementById("word-profile-modal").setAttribute("open", true);
@@ -33,23 +28,20 @@ function handleResponse(message) {
       message[i] == ":" ||
       message[i] == ";"
     ) {
-      // let currentWordIndex = messagewords.push(currentword) -1;
-      // document.getElementById("textbox").innerHTML += `<a class="word" id="${currentWordIndex}">${currentword}</a>`;
-      document.getElementById("textbox").innerHTML += `<a class="word">${currentword}</a>`;
+      document.getElementById(
+        "textbox"
+      ).innerHTML += `<a class="word">${currentword}</a>`;
       document.getElementById("textbox").innerHTML += message[i];
       currentword = "";
     } else if (message[i] == " ") {
-      // let currentWordIndex = messagewords.push(currentword) -1;
-      // document.getElementById("textbox").innerHTML += `<a class="word" id="${currentWordIndex}">${currentword}</a> `;
-      document.getElementById("textbox").innerHTML += `<a class="word">${currentword}</a> `;
-      // console.log(currentword)
+      document.getElementById(
+        "textbox"
+      ).innerHTML += `<a class="word">${currentword}</a> `;
       currentword = "";
-      // console.log(currentWordIndex)
-      // console.log(document.getElementById(currentWordIndex))
     } else if (message[i] == "\n") {
-      // let currentWordIndex = messagewords.push(currentword) -1;
-      // document.getElementById("textbox").innerHTML += `<a class="word" id="${currentWordIndex}">${currentword}</a><br>`;
-      document.getElementById("textbox").innerHTML += `<a class="word">${currentword}</a><br>`;
+      document.getElementById(
+        "textbox"
+      ).innerHTML += `<a class="word">${currentword}</a><br>`;
       currentword = "";
     } else if (
       message[i] == "0" ||
@@ -63,9 +55,9 @@ function handleResponse(message) {
       message[i] == "8" ||
       message[i] == "9"
     ) {
-      // let currentWordIndex = messagewords.push(currentword) -1;
-      // document.getElementById("textbox").innerHTML += `<a class="word" id="${currentWordIndex}">${currentword}</a>`;
-      document.getElementById("textbox").innerHTML += `<a class="word">${currentword}</a>`;
+      document.getElementById(
+        "textbox"
+      ).innerHTML += `<a class="word">${currentword}</a>`;
       document.getElementById("textbox").innerHTML += message[i];
       currentword = "";
     } else {
@@ -74,49 +66,45 @@ function handleResponse(message) {
   }
   tippy(".word", {
     onShown(instance) {
-      console.log("------------- NEW WORD ----------------");
       document.getElementById("tooltip-definitions").innerHTML = "";
       document.getElementById("definitions-box").innerHTML = "";
       document.getElementById("syn-box").innerHTML = "";
       document.getElementById("ant-box").innerHTML = "";
-      fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + instance.reference.innerHTML)
+      fetch(
+        "https://api.dictionaryapi.dev/api/v2/entries/en/" +
+          instance.reference.innerHTML
+      )
         .then((response) => response.json())
         .then((data) => {
           document.getElementById("tooltip-word").innerHTML =
             "<h5>" + instance.reference.innerHTML.toLowerCase() + "</h5>";
-          document.getElementById("modal-word").innerHTML = instance.reference.innerHTML.toLowerCase();
-          console.log(data);
+          document.getElementById("modal-word").innerHTML =
+            instance.reference.innerHTML.toLowerCase();
           let synonyms = new Set();
           let antonyms = new Set();
           data.forEach((wordDefinition) => {
-            console.log("------------------- New wordDefinition");
             wordDefinition.meanings.forEach((meaning) => {
-              console.log("--------- New meaning");
-              console.log(meaning.partOfSpeech);
               document.getElementById("tooltip-definitions").innerHTML +=
                 "<strong>(" + meaning.partOfSpeech + ")</strong>";
-              let futureDefinitionsBoxInnerHTML = "<details><summary>(" + meaning.partOfSpeech + ")</summary>";
-              // console.log(document.getElementById("definitions-box"));
+              let futureDefinitionsBoxInnerHTML =
+                "<details><summary>(" + meaning.partOfSpeech + ")</summary>";
               document.getElementById("tooltip-definitions").innerHTML +=
-                '<p class="tippy-p">' + meaning.definitions[0].definition + "</p>";
+                '<p class="tippy-p">' +
+                meaning.definitions[0].definition +
+                "</p>";
               meaning.definitions.forEach((actualdefinitionObject) => {
-                console.log(actualdefinitionObject.definition);
-                futureDefinitionsBoxInnerHTML += "<p>" + actualdefinitionObject.definition + "</p>";
+                futureDefinitionsBoxInnerHTML +=
+                  "<p>" + actualdefinitionObject.definition + "</p>";
               });
               meaning.synonyms.forEach((synonym) => {
-                console.log("SYNONYMS");
-                console.log(synonym);
-                console.log(synonyms);
                 synonyms.add(synonym);
               });
               meaning.antonyms.forEach((antonym) => {
-                console.log("ANT");
-                console.log(antonym);
-                console.log(antonyms);
                 antonyms.add(antonym);
               });
               futureDefinitionsBoxInnerHTML += "</details>";
-              document.getElementById("definitions-box").innerHTML += futureDefinitionsBoxInnerHTML;
+              document.getElementById("definitions-box").innerHTML +=
+                futureDefinitionsBoxInnerHTML;
             });
           });
           let synonymIndex = 0;
@@ -147,25 +135,19 @@ function handleResponse(message) {
             }
             antonymIndex++;
           });
-          // document.getElementById("tooltip-button-div").innerHTML = '<a class="tooltip-more">+</a>';
-          // console.log(document.getElementById("tooltip-more"))
-          // document
-          //   .getElementById("word-profile-modal")
-          //   .setAttribute("open", true);
-          // document.getElementById("tooltip-button-div").addEventListener(click, openModal);
-          instance.setContent(document.getElementById("tooltip-template").innerHTML);
-          console.log("hello2");
+          instance.setContent(
+            document.getElementById("tooltip-template").innerHTML
+          );
           document.querySelectorAll(".tooltip-more").forEach((element) => {
             element.addEventListener("click", openModal);
-            console.log("Adding Event Listener for openModal");
           });
         })
         .catch((error) => {
-          console.log(error);
           document.getElementById("tooltip-word-no-data").innerHTML =
             "<h5>" + instance.reference.innerHTML.toLowerCase() + "</h5>";
-          instance.setContent(document.getElementById("tooltip-no-data").innerHTML);
-          console.log("error");
+          instance.setContent(
+            document.getElementById("tooltip-no-data").innerHTML
+          );
         });
     },
     onHidden(instance) {
@@ -181,52 +163,12 @@ function handleResponse(message) {
   document.getElementById("loading-indicator").style.display = "none";
 }
 
-function handleError(error) {
-  console.log(`Error: ${error}`);
-}
-
-// const getScrollbarWidth = () => {
-//   // Creating invisible container
-//   const outer = document.createElement("div");
-//   outer.style.visibility = "hidden";
-//   outer.style.overflow = "scroll"; // forcing scrollbar to appear
-//   outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
-//   document.body.appendChild(outer);
-
-//   // Creating inner element and placing it in the container
-//   const inner = document.createElement("div");
-//   outer.appendChild(inner);
-
-//   // Calculating difference between container's full width and the child width
-//   const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
-
-//   // Removing temporary elements from the DOM
-//   outer.parentNode.removeChild(outer);
-
-//   return scrollbarWidth;
-// };
-
-// const isScrollbarVisible = () => {
-//   return document.body.scrollHeight > screen.height;
-// };
+function handleError(error) {}
 
 const closeModal = () => {
   modalvisible = false;
-  // document.getElementById("word-profile-modal").style.removeProperty("--scrollbar-width");
   document.getElementById("word-profile-modal").setAttribute("open", false);
 };
-
-//TODO Implement click outside modal
-// document.addEventListener("click", (event) => {
-//   if (modalvisible == true) {
-//     const modalContent = document.getElementById("word-profile-modal").querySelector("article");
-//     const isClickInside = modalContent.contains(event.target);
-//     console.log(isClickInside);
-//     if (isClickInside == false) {
-//       closeModal();
-//     }
-//   }
-// });
 
 document.getElementById("close-modal").addEventListener("click", closeModal);
 
