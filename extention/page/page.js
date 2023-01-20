@@ -77,6 +77,8 @@ function handleResponse(message) {
       console.log("------------- NEW WORD ----------------");
       document.getElementById("tooltip-definitions").innerHTML = "";
       document.getElementById("definitions-box").innerHTML = "";
+      document.getElementById("syn-box").innerHTML = "";
+      document.getElementById("ant-box").innerHTML = "";
       fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + instance.reference.innerHTML)
         .then((response) => response.json())
         .then((data) => {
@@ -84,6 +86,8 @@ function handleResponse(message) {
             "<h5>" + instance.reference.innerHTML.toLowerCase() + "</h5>";
           document.getElementById("modal-word").innerHTML = instance.reference.innerHTML.toLowerCase();
           console.log(data);
+          let synonyms = new Set();
+          let antonyms = new Set();
           data.forEach((wordDefinition) => {
             console.log("------------------- New wordDefinition");
             wordDefinition.meanings.forEach((meaning) => {
@@ -99,9 +103,49 @@ function handleResponse(message) {
                 console.log(actualdefinitionObject.definition);
                 futureDefinitionsBoxInnerHTML += "<p>" + actualdefinitionObject.definition + "</p>";
               });
+              meaning.synonyms.forEach((synonym) => {
+                console.log("SYNONYMS");
+                console.log(synonym);
+                console.log(synonyms);
+                synonyms.add(synonym);
+              });
+              meaning.antonyms.forEach((antonym) => {
+                console.log("ANT");
+                console.log(antonym);
+                console.log(antonyms);
+                antonyms.add(antonym);
+              });
               futureDefinitionsBoxInnerHTML += "</details>";
               document.getElementById("definitions-box").innerHTML += futureDefinitionsBoxInnerHTML;
             });
+          });
+          let synonymIndex = 0;
+          if (synonyms.size == 0) {
+            document.getElementById("syn-title").style.visibility = "hidden";
+          } else {
+            document.getElementById("syn-title").style.visibility = "visible";
+          }
+          synonyms.forEach((element) => {
+            if (synonymIndex == 0) {
+              document.getElementById("syn-box").innerHTML += element;
+            } else {
+              document.getElementById("syn-box").innerHTML += ", " + element;
+            }
+            synonymIndex++;
+          });
+          let antonymIndex = 0;
+          if (antonyms.size == 0) {
+            document.getElementById("ant-title").style.visibility = "hidden";
+          } else {
+            document.getElementById("ant-title").style.visibility = "visible";
+          }
+          antonyms.forEach((element) => {
+            if (antonymIndex == 0) {
+              document.getElementById("ant-box").innerHTML += element;
+            } else {
+              document.getElementById("ant-box").innerHTML += ", " + element;
+            }
+            antonymIndex++;
           });
           // document.getElementById("tooltip-button-div").innerHTML = '<a class="tooltip-more">+</a>';
           // console.log(document.getElementById("tooltip-more"))
@@ -116,7 +160,8 @@ function handleResponse(message) {
             console.log("Adding Event Listener for openModal");
           });
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log(error);
           document.getElementById("tooltip-word-no-data").innerHTML =
             "<h5>" + instance.reference.innerHTML.toLowerCase() + "</h5>";
           instance.setContent(document.getElementById("tooltip-no-data").innerHTML);

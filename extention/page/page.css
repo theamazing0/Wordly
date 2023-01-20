@@ -7,6 +7,10 @@
   text-decoration: none;
 }
 
+#title-header {
+  text-align: center !important;
+}
+
 .tippy-box[data-theme~="picoinherit"] {
   background-color: var(--dropdown-background-color) !important;
 }

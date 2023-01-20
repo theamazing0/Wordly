@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "English learning tool",
   "icons": {
-    "48": "icons/border-48.png"
+    "48": "icons/icon.svg"
   },
   "background": {
     "scripts": [

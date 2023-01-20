@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="picocss/pico.min.css" />
     <link rel="stylesheet" href="page.css" />
-    <title>Readr</title>
+    <link rel="icon" type="image/x-icon" href="../icons/icon.svg">
+    <title>Wordly</title>
   </head>
 
   <body>
     <main class="container">
-      <h2>Wordly Readr</h2>
+      <h2 id="title-header"><image src="../icons/icon.svg" height="50" width="50" /> Wordly</h2>
       <article>
         <p aria-busy="true" id="loading-indicator"></p>
         <p id="textbox"></p>
@@ -35,7 +36,12 @@
           Word Profile
         </header>
         <h3 id="modal-word"></h3>
+        <h5>Definitions</h5>
         <div id="definitions-box"></div>
+        <h5 id="syn-title">Synonyms</h5>
+        <p id="syn-box"></p>
+        <h5 id="ant-title">Antonyms</h5>
+        <p id="ant-box"></p>
       </article>
     </dialog>
     <script src="popperjs/dist/umd/popper.min.js"></script>
