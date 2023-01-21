@@ -2,14 +2,6 @@ var selection = ""
 
 function onCreated(tab) {
   console.log("Tab Created")
-  // var loop = true
-  // while (loop = true) {
-  //   const sending = browser.tabs.sendMessage(tab.id, {selection:selection}).then((response) => {
-  //       loop = false
-  //       console.log("Message from the content script:");
-  //       console.log(response.response);
-  //     })
-  // }
 }
 
 function onError(error) {
