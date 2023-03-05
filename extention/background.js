@@ -1,7 +1,7 @@
-var selection = ""
+var selection = "";
 
 function onCreated(tab) {
-  console.log("Tab Created")
+  console.log("Tab Created");
 }
 
 function onError(error) {
@@ -9,16 +9,16 @@ function onError(error) {
 }
 
 browser.contextMenus.create({
-    id: "open-selection-in-wordly",
-    title: "Read with Wordly",
-    contexts: ["selection"],
+  id: "open-selection-in-wordly",
+  title: "Read with Wordly",
+  contexts: ["selection"],
 });
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
   switch (info.menuItemId) {
     case "open-selection-in-wordly":
       selection = info.selectionText;
-      let createData = {url: "page/page.html"};
+      let createData = { url: "page/page.html" };
       let creating = browser.tabs.create(createData);
       creating.then(onCreated, onError);
       break;
@@ -27,7 +27,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
 function onVisited(historyItem) {
   if (historyItem.url === browser.extension.getURL(myPage)) {
-    browser.history.deleteUrl({url: historyItem.url});
+    browser.history.deleteUrl({ url: historyItem.url });
   }
 }
 
