@@ -1,8 +1,38 @@
 import { LatencyOptimisedTranslator } from "../bergamot-translator/translator.js";
 
 const translator = new LatencyOptimisedTranslator();
+console.log(translator);
 
-function toggleEnglishSentence(event) {
+var lang;
+var fam;
+
+browser.storage.local.get(["userdata"], function (storage) {
+  if (!("lang" in storage)) {
+    browser.storage.local.set({ lang: "en" });
+    lang = "en";
+  } else {
+    lang = storage["lang"];
+  }
+  if (!("fam" in storage)) {
+    browser.storage.local.set({ fam: 0 });
+    fam = 0;
+  } else {
+    fam = storage["fam"];
+  }
+});
+
+document.getElementById("open-options").addEventListener("click", function () {
+  if (document.getElementById("options-card").hidden == true) {
+    document.getElementById("options-card").hidden = false;
+    document.getElementById(lang).selected = true;
+    if document.getElementById("fam-fieldset")
+    document.getElementById(fam).checked = true;
+  } else {
+    document.getElementById("options-card").hidden = true;
+  }
+});
+
+function toggleEnglishSentence() {
   const originalElement = this.parentElement.querySelector("article");
   if (originalElement.hidden == false) {
     originalElement.hidden = true;
@@ -18,7 +48,7 @@ async function translateSentences() {
   for (const sentenceElement of sentencesToTranslate) {
     const response = await translator.translate({
       from: "en",
-      to: "es",
+      to: lang,
       text: sentenceElement.innerHTML,
       html: true,
     });
@@ -40,7 +70,7 @@ function openModal() {
 function processSelection(message) {
   let w;
   w = new Worker("scripts/selection.js");
-  w.postMessage(message);
+  w.postMessage([message, fam]);
   w.onmessage = function (event) {
     console.log("Recieved parsed message: " + event);
     document.getElementById("textbox").innerHTML = event.data;

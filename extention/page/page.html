@@ -13,7 +13,55 @@
     <main class="container">
       <h2 id="title-header">
         <image src="../icons/icon.svg" height="50" width="50" /> Wordly
+        <a id="open-options">
+          <image src="../icons/settings.svg" height="40" width="40" />
+        </a>
       </h2>
+      <article id="options-card" hidden>
+        <h3>Options</h3>
+        <label for="languages">Native/Primary Language</label>
+        <select id="languages" style="width: min-content" required>
+          <option value="en" id="en">English</option>
+          <option value="es" id="es">Spanish</option>
+          <option value="fr" id="fr">French</option>
+          <option value="it" id="it">Italian</option>
+          <option value="pt" id="pt">Portuguese</option>
+          <option value="ru" id="ru">Russian</option>
+          <option value="cs" id="cs">Czech</option>
+          <option value="de" id="de">German</option>
+          <option value="et" id="et">Estonian</option>
+          <option value="bg" id="bg">Bulgarian</option>
+          <option value="uk" id="uk">Ukrainian</option>
+        </select>
+        <fieldset id="fam-fieldset">
+          <legend>English Familiarity Level</legend>
+          <label for="novice">
+            <input type="radio" id="600" name="familiarity" value="600" />
+            Novice
+          </label>
+          <small
+            >I am learning the basic concepts of English.
+            <strong>ex. You, We, Sleep, Rain</strong></small
+          >
+          <label for="learner">
+            <input type="radio" id="550" name="familiarity" value="550" />
+            Learner
+          </label>
+          <small
+            >I am learning casual, and other everyday vocabulary.
+            <strong>ex. Selection, Neighbor, Dense, Bill</strong></small
+          >
+          <label for="expert">
+            <input type="radio" id="400" name="familiarity" value="400" />
+            Expert
+          </label>
+          <small
+            >I am learning the advanced and most complicated vocabulary.
+            <strong>ex. Rigid, Neglect, Geographical, Smear</strong></small
+          >
+        </fieldset>
+        <button style="width: min-content">Save</button>
+      </article>
       <article>
         <p aria-busy="true" id="loading-indicator"></p>
         <p id="textbox" hidden></p>

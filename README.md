@@ -1,2 +1,3 @@
 # Wordly
  
+Feather icons - MIT

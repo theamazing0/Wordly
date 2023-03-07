@@ -4947,6 +4947,7 @@ famdata = {
 // var translator = new BatchTranslator();
 
 var currentSentenceDifficult = false;
+var fam;
 
 function findFam(word) {
   let famval = 700;
@@ -4960,17 +4961,18 @@ function findFam(word) {
       famval = famdata[wordStemUpper];
     }
   }
-  if (famval < 450) {
+  if (famval < fam) {
     currentSentenceDifficult = true;
   }
   return famval;
 }
 
-self.onmessage = function handleMessageFromMain(messageFromMain) {
-  let message = messageFromMain.data;
+self.onmessage = function handleMessageFromMain(dataFromMain) {
+  let message = dataFromMain.data[0];
   let htmlOutput = "";
   let currentSentence = [];
   let currentword = "";
+  fam = dataFromMain.data[1];
   console.log(message);
   for (var i = 0; i <= message.length; i++) {
     // console.log(i)
@@ -5065,10 +5067,60 @@ self.onmessage = function handleMessageFromMain(messageFromMain) {
         };
         currentSentence.push(currentWordObject);
       }
-      const currentChar = { type: "npunct", content: message[i] };
-      currentSentence.push(currentChar);
-      currentword = "";
-      console.log(currentSentence);
+      if (message[i + 1] != " " || message[i + 1] != "\n") {
+        const currentChar = { type: "espunct", content: message[i] };
+        currentSentence.push(currentChar);
+        currentword = "";
+        console.log(currentSentence);
+        if (currentSentenceDifficult == true) {
+          htmlOutput += `<span><a class="translated-sentence">`;
+          let englishHtml =
+            '<article class="original-sentence" style="background: var(--card-sectionning-background-color)" hidden><h6>Original Sentence: </h6>';
+          for (content of currentSentence) {
+            if (content.type == "word") {
+              htmlOutput += `<span>${content.content}</span>`;
+              englishHtml += `<a class="word">${content.content}</a>`;
+            } else {
+              htmlOutput += content.content;
+              englishHtml += content.content;
+            }
+          }
+          htmlOutput +=
+            "</a>" + englishHtml.replaceAll("<br>", "") + "</article></span>";
+          currentSentenceDifficult = false;
+        } else {
+          for (content of currentSentence) {
+            if (content.type == "word") {
+              htmlOutput += `<a class="word">${content.content}</a>`;
+            } else {
+              htmlOutput += content.content;
+            }
+          }
+        }
+        currentSentence = [];
+      } // False call, it's actually just a normal punct
+      else {
+        const currentChar = { type: "npunct", content: message[i] };
+        currentSentence.push(currentChar);
+        currentword = "";
+      }
+    } // Remove invalid characters
+    else if (message[i] == undefined) {
+      console.log("undefined");
+    } // Normal Character
+    else {
+      currentword += message[i];
+    }
+    // End of passage reached
+    if (message.length < i + 1) {
+      if (currentword != "") {
+        const currentWordObject = {
+          type: "word",
+          content: currentword,
+          fam: findFam(currentword),
+        };
+        currentSentence.push(currentWordObject);
+      }
       if (currentSentenceDifficult == true) {
         htmlOutput += `<span><a class="translated-sentence">`;
         let englishHtml =
@@ -5094,10 +5146,6 @@ self.onmessage = function handleMessageFromMain(messageFromMain) {
           }
         }
       }
-      currentSentence = [];
-    } // Normal Character
-    else {
-      currentword += message[i];
     }
   }
   postMessage(htmlOutput);
