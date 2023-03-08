@@ -3,33 +3,84 @@ import { LatencyOptimisedTranslator } from "../bergamot-translator/translator.js
 const translator = new LatencyOptimisedTranslator();
 console.log(translator);
 
-var lang;
 var fam;
+var lang;
 
-browser.storage.local.get(["userdata"], function (storage) {
-  if (!("lang" in storage)) {
-    browser.storage.local.set({ lang: "en" });
-    lang = "en";
-  } else {
-    lang = storage["lang"];
-  }
-  if (!("fam" in storage)) {
-    browser.storage.local.set({ fam: 0 });
-    fam = 0;
-  } else {
-    fam = storage["fam"];
-  }
+let requestStorage = browser.storage.local.get({
+  lang: "en",
+  fam: 0,
+});
+requestStorage.then(function (storageRecieved) {
+  browser.storage.local.set({
+    lang: storageRecieved.lang,
+    fam: storageRecieved.fam,
+  });
+  lang = storageRecieved.lang;
+  fam = storageRecieved.fam;
 });
 
+// browser.storage.local.get(["storedLang"], function (data) {
+//   console.log(data);
+//   if (data.length() == 0) {
+//     console.log("lang if");
+//     browser.storage.local.set({ storedLang: "en" });
+//   } else {
+//     console.log("lang else");
+//     lang = data[0];
+//   }
+//   console.log("lang: " + lang);
+// });
+// browser.storage.local.get(["storedFam"], function (data) {
+//   console.log(data);
+//   if (data.length() == 0) {
+//     console.log("fam if");
+//     browser.storage.local.set({ storedFam: "en" });
+//   } else {
+//     console.log("fam else");
+//     fam = data[0];
+//   }
+//   console.log("fam: " + fam);
+// });
+
 document.getElementById("open-options").addEventListener("click", function () {
+  console.log(lang);
+  console.log(fam);
   if (document.getElementById("options-card").hidden == true) {
     document.getElementById("options-card").hidden = false;
     document.getElementById(lang).selected = true;
-    if document.getElementById("fam-fieldset")
-    document.getElementById(fam).checked = true;
+    if (fam == 0) {
+      document.getElementById("fam-fieldset").hidden = true;
+    } else {
+      document.getElementById(fam).checked = true;
+    }
   } else {
     document.getElementById("options-card").hidden = true;
   }
+});
+
+document.getElementById("languages").addEventListener("change", function () {
+  if (this.value == "en") {
+    document.getElementById("fam-fieldset").hidden = true;
+  } else {
+    document.getElementById("fam-fieldset").hidden = false;
+  }
+});
+
+document.getElementById("save-options").addEventListener("click", function () {
+  var langToSet = document.getElementById("languages").value;
+  var famToSet = document.querySelector(
+    'input[name="familiarity"]:checked'
+  ).value;
+  if (langToSet == "en") {
+    famToSet = 0;
+  }
+  browser.storage.local.set(
+    {
+      lang: langToSet,
+      fam: famToSet,
+    },
+    window.location.reload()
+  );
 });
 
 function toggleEnglishSentence() {

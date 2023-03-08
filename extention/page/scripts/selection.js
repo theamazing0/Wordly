@@ -4963,6 +4963,7 @@ function findFam(word) {
   }
   if (famval < fam) {
     currentSentenceDifficult = true;
+    console.log("difficult")
   }
   return famval;
 }
