@@ -17,6 +17,10 @@ requestStorage.then(function (storageRecieved) {
   });
   lang = storageRecieved.lang;
   fam = storageRecieved.fam;
+  console.log(lang);
+  console.log(fam);
+  const sending = browser.runtime.sendMessage({ request: "selection" });
+  sending.then(processSelection, handleError);
 });
 
 // browser.storage.local.get(["storedLang"], function (data) {
@@ -51,7 +55,7 @@ document.getElementById("open-options").addEventListener("click", function () {
     if (fam == 0) {
       document.getElementById("fam-fieldset").hidden = true;
     } else {
-      document.getElementById(fam).checked = true;
+      document.getElementById(String(fam)).checked = true;
     }
   } else {
     document.getElementById("options-card").hidden = true;
@@ -119,8 +123,7 @@ function openModal() {
 }
 
 function processSelection(message) {
-  let w;
-  w = new Worker("scripts/selection.js");
+  const w = new Worker("scripts/selection.js");
   w.postMessage([message, fam]);
   w.onmessage = function (event) {
     console.log("Recieved parsed message: " + event);
@@ -238,6 +241,3 @@ const closeModal = () => {
 };
 
 document.getElementById("close-modal").addEventListener("click", closeModal);
-
-const sending = browser.runtime.sendMessage({ request: "selection" });
-sending.then(processSelection, handleError);

@@ -4963,7 +4963,7 @@ function findFam(word) {
   }
   if (famval < fam) {
     currentSentenceDifficult = true;
-    console.log("difficult")
+    console.log("difficult");
   }
   return famval;
 }
@@ -4974,6 +4974,7 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
   let currentSentence = [];
   let currentword = "";
   fam = dataFromMain.data[1];
+  console.log("dataFromMain.data: " + dataFromMain.data[1]);
   console.log(message);
   for (var i = 0; i <= message.length; i++) {
     // console.log(i)
