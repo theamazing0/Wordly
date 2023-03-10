@@ -1,4 +1,6 @@
-// START PORTER STEMMER
+// Webworker for stage 2 of selection processing
+
+// Define porter stemmer
 
 // Porter stemmer in Javascript. Few comments, but it's easy to follow against the rules in the original
 // paper, in
@@ -198,9 +200,7 @@ var stemmer = (function () {
   };
 })();
 
-// END PORTER STEMMER
-
-// START FAMILIARITY DATA
+// Define familiarity data
 
 famdata = {
   A: "632",
@@ -4941,44 +4941,47 @@ famdata = {
   ZOOLOGY: "448",
 };
 
-// END FAMILIARITY DATA
-
-// import { BatchTranslator } from "bergamot-translator/translator.js";
-// var translator = new BatchTranslator();
-
+// define some globally used variables
 var currentSentenceDifficult = false;
 var fam;
 
+// function to find familiarity of words
 function findFam(word) {
+  // set backup familiarity level of a word to minimum in case no data exists for it
   let famval = 700;
+  // check for word in familiarity data
   let wordUpper = word.toUpperCase();
   if (wordUpper in famdata) {
     famval = famdata[wordUpper];
   } else {
+    // if not found, try stemming word and then trying
     let wordStem = stemmer(word);
     let wordStemUpper = wordStem.toUpperCase();
     if (wordStemUpper in famdata) {
       famval = famdata[wordStemUpper];
     }
   }
+  // if word is difficult to understand for reader, then flag the current sentence
   if (famval < fam) {
     currentSentenceDifficult = true;
-    console.log("difficult");
   }
+  // return the familiarity
   return famval;
 }
 
+// start stage 1 of processing when selection is recieved
 self.onmessage = function handleMessageFromMain(dataFromMain) {
+  // get selection from recieved data
   let message = dataFromMain.data[0];
+  // variable to store data that will be returned to main for stages 2 and 3
   let htmlOutput = "";
+  // variable to build current word and sentence during loop
   let currentSentence = [];
   let currentword = "";
+  // set user's familiarity from recieved data
   fam = dataFromMain.data[1];
-  console.log("dataFromMain.data: " + dataFromMain.data[1]);
-  console.log(message);
+  // loop through every characters in the selection
   for (var i = 0; i <= message.length; i++) {
-    // console.log(i)
-    // console.log(message[i])
     // Normal Punctuation
     if (
       message[i] == "," ||
@@ -4996,8 +4999,7 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
       message[i] == ":" ||
       message[i] == ";"
     ) {
-      // currentSentence += `<a class="word">${currentword}</a>`;
-      // currentSentence += message[i];
+      // if current word is not empty, then add it to current sentence
       if (currentword != "") {
         const currentWordObject = {
           type: "word",
@@ -5006,11 +5008,14 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         };
         currentSentence.push(currentWordObject);
       }
+      // add current character to current sentence
       const currentChar = { type: "npunct", content: message[i] };
       currentSentence.push(currentChar);
+      // clear the current word
       currentword = "";
     } // Spaces
     else if (message[i] == " ") {
+      // if current word is not empty, then add it to current sentence
       if (currentword != "") {
         const currentWordObject = {
           type: "word",
@@ -5019,11 +5024,14 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         };
         currentSentence.push(currentWordObject);
       }
+      // add current character to current sentence
       const currentChar = { type: "space", content: message[i] };
       currentSentence.push(currentChar);
+      // clear the current word
       currentword = "";
     } // New Line
     else if (message[i] == "\n") {
+      // if current word is not empty, then add it to current sentence
       if (currentword != "") {
         const currentWordObject = {
           type: "word",
@@ -5032,8 +5040,10 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         };
         currentSentence.push(currentWordObject);
       }
+      // add current character to current sentence
       const currentChar = { type: "nline", content: "<br>" };
       currentSentence.push(currentChar);
+      // clear the current word
       currentword = "";
     } // Numbers
     else if (
@@ -5048,6 +5058,7 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
       message[i] == "8" ||
       message[i] == "9"
     ) {
+      // if current word is not empty, then add it to current sentence
       if (currentword != "") {
         const currentWordObject = {
           type: "word",
@@ -5056,11 +5067,14 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         };
         currentSentence.push(currentWordObject);
       }
+      // add current character to current sentence
       const currentChar = { type: "num", content: message[i] };
       currentSentence.push(currentChar);
+      // clear the current word
       currentword = "";
     } // Setence Ending Punctuation
     else if (message[i] == "." || message[i] == "!" || message[i] == "?") {
+      // if current word is not empty, then add it to current sentence
       if (currentword != "") {
         const currentWordObject = {
           type: "word",
@@ -5069,28 +5083,40 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         };
         currentSentence.push(currentWordObject);
       }
+      // check if current character is actually sentence ending
       if (message[i + 1] != " " || message[i + 1] != "\n") {
+        // add current character to current sentence
         const currentChar = { type: "espunct", content: message[i] };
         currentSentence.push(currentChar);
-        currentword = "";
-        console.log(currentSentence);
+        // check if the sentence has been flagged as difficult
         if (currentSentenceDifficult == true) {
+          // add opening tags to html output
           htmlOutput += `<span><a class="translated-sentence">`;
+          // add opening tags to html output for original sentence card
           let englishHtml =
             '<article class="original-sentence" style="background: var(--card-sectionning-background-color)" hidden><h6>Original Sentence: </h6>';
+          // loop through content elements (words, punct, numbers, spaces, new lines)
           for (content of currentSentence) {
+            // if content is a word
             if (content.type == "word") {
+              // add it to the html output to be translated in stage 3
               htmlOutput += `<span>${content.content}</span>`;
+              // add it to the original sentence card
               englishHtml += `<a class="word">${content.content}</a>`;
             } else {
+              // otherwise, just add the content to both outputs
               htmlOutput += content.content;
               englishHtml += content.content;
             }
           }
+          // add the original sentence card to the html output
           htmlOutput +=
             "</a>" + englishHtml.replaceAll("<br>", "") + "</article></span>";
+          // reset the difficult sentence flag
           currentSentenceDifficult = false;
-        } else {
+        } // If the sentence is not difficult
+        else {
+          // loop through the content elements and add them to the html output
           for (content of currentSentence) {
             if (content.type == "word") {
               htmlOutput += `<a class="word">${content.content}</a>`;
@@ -5099,22 +5125,25 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
             }
           }
         }
+        // clear the current sentence
         currentSentence = [];
-      } // False call, it's actually just a normal punct
+      } // In case the punctutation mark didn't actually end the sentence
       else {
+        // add current character to current sentence
         const currentChar = { type: "npunct", content: message[i] };
         currentSentence.push(currentChar);
-        currentword = "";
       }
-    } // Remove invalid characters
+      // clear the current word
+      currentword = "";
+    } // If the character is invalid, then ignore it
     else if (message[i] == undefined) {
-      console.log("undefined");
     } // Normal Character
     else {
       currentword += message[i];
     }
     // End of passage reached
     if (message.length < i + 1) {
+      // if current word is not empty, then add it to current sentence
       if (currentword != "") {
         const currentWordObject = {
           type: "word",
@@ -5124,22 +5153,33 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         currentSentence.push(currentWordObject);
       }
       if (currentSentenceDifficult == true) {
+        // add opening tags to html output
         htmlOutput += `<span><a class="translated-sentence">`;
+        // add opening tags to html output for original sentence card
         let englishHtml =
           '<article class="original-sentence" style="background: var(--card-sectionning-background-color)" hidden><h6>Original Sentence: </h6>';
+        // loop through content elements (words, punct, numbers, spaces, new lines)
         for (content of currentSentence) {
+          // if content is a word
           if (content.type == "word") {
+            // add it to the html output to be translated in stage 3
             htmlOutput += `<span>${content.content}</span>`;
+            // add it to the original sentence card
             englishHtml += `<a class="word">${content.content}</a>`;
           } else {
+            // otherwise, just add the content to both outputs
             htmlOutput += content.content;
             englishHtml += content.content;
           }
         }
+        // add the original sentence card to the html output
         htmlOutput +=
           "</a>" + englishHtml.replaceAll("<br>", "") + "</article></span>";
+        // reset the difficult sentence flag
         currentSentenceDifficult = false;
-      } else {
+      } // If the sentence is not difficult
+      else {
+        // loop through the content elements and add them to the html output
         for (content of currentSentence) {
           if (content.type == "word") {
             htmlOutput += `<a class="word">${content.content}</a>`;
@@ -5150,5 +5190,6 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
       }
     }
   }
+  // return data to page.js for stage 2 & 3 processing
   postMessage(htmlOutput);
 };
