@@ -5084,7 +5084,7 @@ self.onmessage = function handleMessageFromMain(dataFromMain) {
         currentSentence.push(currentWordObject);
       }
       // check if current character is actually sentence ending
-      if (message[i + 1] != " " || message[i + 1] != "\n") {
+      if (message[i + 1] == " " || message[i + 1] == "\n") {
         // add current character to current sentence
         const currentChar = { type: "espunct", content: message[i] };
         currentSentence.push(currentChar);
